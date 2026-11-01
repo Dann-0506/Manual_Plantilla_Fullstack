@@ -1,0 +1,99 @@
+\documentclass[11pt,titlepage,letterpaper,oneside]{report}
+
+% Codificacion e idioma
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+% Maquetacion
+\usepackage{geometry}
+\usepackage{fancyhdr}
+
+% Codigo fuente
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+
+% Elementos graficos y tablas
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+
+% Referencias en indice
+\usepackage[hidelinks]{hyperref}
+
+% Referencias bibliograficas
+\usepackage[backend=biber, citestyle=numeric-comp]{biblatex}
+\addbibresource{referencias.bib}
+
+% Cuadros de texto y codigo
+\tcbuselibrary{skins,breakable}
+\newtcolorbox{avisobox}[3]{
+	enhanced, breakable,
+	colback=#2!4!white,
+	frame hidden,
+	borderline west={2.5pt}{0pt}{#2!65!black},
+	left=10pt, right=10pt, top=6pt, bottom=6pt,
+	before upper={\raggedright},
+	fonttitle=\sffamily\bfseries\small,
+	coltitle=#2!45!black,
+	title={\textsc{#1}}
+}
+\newenvironment{codebox}[1]{\begin{avisobox}{Código \textbullet\ #1}{gray}{}}{\end{avisobox}}
+\lstset{
+	basicstyle=\ttfamily\small,
+	xleftmargin=0pt,
+	xrightmargin=0pt,
+	breaklines=true,
+	columns=fullflexible
+}
+\newenvironment{notabox}{\begin{avisobox}{Nota}{blue}{}}{\end{avisobox}}
+\newenvironment{warnbox}{\begin{avisobox}{Advertencia}{orange}{}}{\end{avisobox}}
+
+\begin{document}
+	\begin{titlepage}
+		\centering
+		%{\includegraphics[width=0.5\textwidth]{images/titlepage_banner.jpg}\par}
+		%\vspace{1cm}
+		{\bfseries\LARGE Tecnol\'ogico Nacional de M\'exico \par}
+		{\bfseries\LARGE Instituto Tecnol\'ogico de Veracruz \par}
+		\vspace{1cm}
+		{\scshape\LARGE Ingenier\'ia en Sistemas Computacionales \par}
+		
+		\vfill
+		
+		{\scshape\huge Arquitectura fullstack y contenedores en el desarrollo web \par}
+		{\itshape\LARGE Manual t\'ecnico y gu\'ia de referencia para la integraci\'on de bases de datos con Spring Boot y React \par}
+		
+		\vfill
+		
+		{\Large Elaborado por: \par}
+		{\Large Daniel Landero Arias \par}
+		{\Large Eduardo Novoa Siles \par}
+		{\Large Ximena Zaleta Hern\'andez \par}
+		\vspace{0.5cm}
+		{\Large Con la asesor\'ia de: \par}
+		{\Large Ezequiel Piña Ortiz \par}
+		
+		\vfill
+		
+		{\Large Septiembre 2026 \par}
+	\end{titlepage}
+	
+	\tableofcontents
+	\newpage
+	
+	\include{capitulos/01-introduccion}
+	\include{capitulos/02-fundamentos}
+	\include{capitulos/03-arquitectura}
+	\include{capitulos/04-instalacion}
+	\include{capitulos/05-explicacion}
+	\include{capitulos/06-taller}
+	\include{capitulos/07-anexos}
+	
+	\clearpage
+	\printbibliography[title={Referencias Bibliogr\'aficas}, heading=bibintoc]
+	
+\end{document}

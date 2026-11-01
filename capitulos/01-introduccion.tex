@@ -1,0 +1,44 @@
+\chapter{Introducci\'on}
+	\section{Contexto y motivaci\'on del proyecto}
+	En el \'ambito de la formaci\'on de un ingeniero en sistemas computacionales dentro del Tecnol\'ogico Nacional de M\'exico, la asignatura de Taller de Base de Datos dota al alumnado de las competencias necesarias para implementar bases de datos que soporten la toma de decisiones y respondan a reglas de negocio, mediante el uso de los lenguajes de definici\'on, manipulaci\'on, seguridad, concurrencia y programaci\'on procedural. Como cierre de estas seis unidades tem\'aticas, el programa exige el desarrollo de un proyecto integrador que demuestre la aplicaci\'on pr\'actica de dichos conocimientos en un contexto real. \\
+	
+	Es en este tipo de proyectos donde suele manifestarse una dificultad m\'as amplia: la de integrar un componente ya diseñado (en este caso, un esquema de base de datos relacional), dentro de una arquitectura de software completa, con servidores, interfaces web y entornos virtualizados. Esta dificultad no es exclusiva de Taller de Base de Datos, sino que se presenta de forma recurrente en cualquier asignatura que desemboque en el desarrollo de aplicaciones fullstack. Dicha dificultad puede desviar el esfuerzo del estudiante hacia la soluci\'on repetida de problemas de configuraci\'on e integraci\'on, en lugar de aplicar sus conocimientos y priorizar el desarrollo del componente que sabe construir. \\
+	
+	Por este motivo, el presente manual t\'ecnico y su repositorio oficial asociado surgen como material de apoyo a la docencia para la Academia de Sistemas y Computaci\'on, proveyendo de una base estandarizada con tecnolog\'ias en contenedores, bases de datos relacionales, Java Spring Boot y React. Su prop\'osito es servir como una gu\'ia de referencia que facilite al alumnado la culminaci\'on de su proyecto integrador bajo est\'andares profesionales de la industria.
+	
+	\section{Objetivo del manual y a qui\'en est\'a dirigido}
+	
+	En l\'inea con lo anterior, el presente manual tiene como objetivo principal servir como una herramienta metodol\'ogica y arquitect\'onica que permita a sus lectores conocer, comprender y aplicar de manera pr\'actica una arquitectura fullstack estandarizada. El contenido est\'a diseñado para guiar paso a paso en la integraci\'on de entornos contenedorizados, bases de datos relacionales y tecnolog\'ias web modernas bajo un enfoque de desarrollo profesional.\\
+	
+	En este sentido, el documento est\'a dirigido a los siguientes perfiles:
+	\begin{itemize}
+		\item \textbf{Al alumnado:} Estudiantes de ingenier\'ia en sistemas computacionales, o carreras afines, que busquen ampliar sus competencias t\'ecnicas mediante la implementaci\'on de una plantilla profesional y estandarizada.
+		\item \textbf{Al personal docente:} Profesores del Tecnol\'ogico Nacional de M\'exico, y otras instituciones de nivel superior, que requieran de un recurso did\'actico y de apoyo a la docencia para elevar la calidad de sus pr\'acticas y unificar criterios de desarrollo en el aula.
+		\item \textbf{A la comunidad general:} Cualquier desarrollador o entusiasta interesado en incrementar sus conocimientos sobre arquitecturas desacopladas o hacer uso directo de la plantilla base para sus propios proyectos tecnol\'ogicos.
+	\end{itemize}
+	
+	Se asume que el lector cuenta con conocimientos b\'asicos de bases de datos relacionales, de programaci\'on orientada a objetos con Java y  de programaci\'on web b\'asica. No se requiere experiencia previa con Docker, Java Spring Boot o React: el cap\'itulo 4 detalla la instalaci\'on de cada herramienta desde cero, por lo que basta con seguir el manual en el orden en el que se presenta.
+	
+	\section{C\'omo usar este manual}
+	
+	El contenido sigue el flujo natural de construcci\'on de una aplicaci\'on fullstack: primero los conceptos te\'oricos, despu\'es la arquitectura general de la plantilla, su instalaci\'on y la explicaci\'on de cada capa. Se propone un ejercicio guiado para extender la plantilla y se incluye material de referencia r\'apida como un glosario de conceptos y una secci\'on de preguntas frecuentes. \\
+	
+	Quien se acerca por primera vez al proyecto puede recorrerlo en este mismo orden, clonando el repositorio oficial y replicando cada ejercicio conforme aparece; el \textbf{alumnado} en particular deber\'ia prestar especial atenci\'on a las secciones 2 y 3, donde se explican los conceptos y decisiones de arquitectura antes de tocar c\'odigo, para luego complementar con el cap\'itulo 6, que presenta un ejercicio pr\'actico, generalizable a distintos m\'odulos, para la ampliaci\'on de la estructura. Quien ya tiene experiencia en el desarrollo fullstack, o quien vuelve al manual como consulta puntual, por ejemplo el \textbf{personal docente} preparando una clase o la \textbf{comunidad general} adaptando la plantilla a un proyecto propio, puede omitir el cap\'itulo 2 y saltar directamente a la secci\'on necesaria, aunque es conveniente haber hecho al menos una lectura completa antes, ya que varios cap\'itulos dan por hecho conceptos explicados previamente. \\
+	
+	Para facilitar la identificaci\'on de informaci\'on relevante durante la lectura y la pr\'actica, el manual emplea las siguientes convenciones visuales:
+	
+	\begin{codebox}{Inicializar los contenedores del proyecto}
+		\begin{lstlisting}[language=bash]
+docker compose up -d --build
+		\end{lstlisting}
+	\end{codebox}
+	Los recuadros de código muestran comandos de terminal, fragmentos de código
+	fuente o configuraciones que deben ejecutarse o copiarse tal cual.
+	
+	\begin{notabox}
+		Este tipo de recuadro señala buenas pr\'acticas, aclaraciones conceptuales o consideraciones \'utiles sobre herramientas empleadas en el proyecto.
+	\end{notabox}
+	
+	\begin{warnbox}
+		Este tipo de recuadro señala puntos cr\'iticos que pueden afectar el funcionamiento de la plantilla, como conflictos de puertos, incompatibilidad de versiones o errores comunes de configuraci\'on entre contenedores.
+	\end{warnbox}

@@ -1,0 +1,163 @@
+\chapter{Conceptos fundamentales}	
+	Antes de abordar la estructura f\'isica del proyecto, la configuraci\'on de contenedores o la implementaci\'on del c\'odigo fuente, es necesario construir el marco conceptual que permita comprender, m\'as adelante, cada decisi\'on t\'ecnica detr\'as de la plantilla. Este cap\'itulo tiene como objetivo brindar al lector la fundamentaci\'on te\'orica sobre los pilares del desarrollo web moderno. \\
+	
+	Para ello, primero se examina el paradigma de la arquitectura fullstack a trav\'es de la separaci\'on cliente-servidor y el uso de APIs REST como interfaz de comunicaci\'on. Despu\'es, se analiza de forma individual el rol de cada tecnolog\'ia seleccionada para el backend, el frontend y la persistencia de la informaci\'on, detallando la problem\'atica espec\'ifica que cada una resuelve dentro del ecosistema. Finalmente, esta perspectiva conceptual se complementa con los principios esenciales de la seguridad web y la justificaci\'on de la virtualizaci\'on a nivel de contenedores, articulando un panorama integral que servir\'a de soporte para las siguientes partes del manual.
+	
+	\section{¿Qué es la arquitectura fullstack?}
+	Para comprender la arquitectura fullstack, es necesario entender primero la evoluci\'on del diseño de software desde los esquemas monol\'iticos hacia el modelo cliente-servidor \cite{mdn-clientserver}. En un desarrollo monol\'itico tradicional, la interfaz de usuario, la l\'ogica de negocio y el acceso a datos se encuentran estrechamente acoplados en una \'unica base de c\'odigo que se ejecuta dentro del mismo entorno. Si bien este enfoque simplifica el despliegue inicial en proyectos pequeños, genera severos cuellos de botella en t\'erminos de escalabilidad, mantenimiento y trabajo colaborativo a medida que el sistema incrementa su complejidad.
+	
+	\newpage
+	
+	Por el contrario, el modelo cliente-servidor es un patr\'on de arquitectura donde se separan las responsabilidades: por un lado, los \textit{clientes} (demandantes de recursos y/o servicios) y, por otro lado, los \textit{servidores} (proveedores de dichos recursos y/o servicios) \cite{mdn-clientserver}. La arquitectura fullstack adopta este paradigma dividiendo el sistema en dos entornos independientes pero interconectados:
+		
+	\begin{itemize}
+		\item \textbf{Frontend:} Capa especializada en la interfaz de usuario, la presentaci\'on visual y la interacci\'on directa con el usuario final.
+		\item \textbf{Backend:} Capa encargada de ejecutar la l\'ogica de negocio, procesar reglas del sistema, aplicar pol\'iticas de seguridad y gestionar el almacenamiento de datos.
+	\end{itemize}
+	
+	Para lograr que el frontend y el backend interact\'uen de forma totalmente desacoplada, se recurre al concepto de \textbf{API REST} (Interfaz de Programaci\'on de Aplicaciones basada en Transferencia de Estado Representacional) \cite{mdn-rest, ibm-rest}. Una API REST act\'ua como un mediador formal entre ambas capas. Utilizando el protocolo HTTP y formatos de intercambio universales como JSON, el cliente realiza solicitudes para consultar o modificar informaci\'on sin requerir conocimiento sobre la implementaci\'on interna del servidor, ni sobre la estructura f\'isica de la base de datos \cite{mdn-rest}. Esta separaci\'on promueve el desarrollo en paralelo entre equipos, garantiza la escalabilidad independiente de cada componente y mejora sustancialmente la mantenibilidad del proyecto a largo plazo.	\\
+	
+	\begin{figure}[htbp]
+		\centering
+		\begin{tikzpicture}[
+			node distance=4.4cm,
+			block/.style={rectangle, draw, fill=blue!8, text width=3cm, rounded corners, minimum height=1.5cm, align=center, font=\bfseries, thick},
+			api/.style={rectangle, draw, fill=green!8, text width=3cm, rounded corners, minimum height=1.5cm, align=center, font=\bfseries, thick},
+			arrow/.style={-{Latex[length=2.5mm]}, thick, draw=black!70}
+			]
+			% Definición de los Bloques Principales
+			\node[block] (cliente) {Cliente};
+			\node[api, right of=cliente, xshift=1.5cm] (api) {API REST};
+			\node[block, right of=api, xshift=1.5cm] (servidor) {Servidor};
+			
+			% --- FLUJO DE IDA ---
+			% Flecha Cliente -> API
+			\draw[arrow] ([yshift=0.3cm]cliente.east) -- node[above, font=\footnotesize\sffamily] {Solicitud HTTP} 
+			([yshift=0.3cm]api.west);
+			
+			% Flecha API -> Servidor
+			\draw[arrow] ([yshift=0.3cm]api.east) -- node[above, font=\footnotesize\sffamily] {Envío de Datos} 
+			([yshift=0.3cm]servidor.west);
+			
+			% --- FLUJO DE VUELTA ---
+			% Flecha Servidor -> API
+			\draw[arrow] ([yshift=-0.3cm]servidor.west) -- node[below, font=\footnotesize\sffamily] {Retorna Datos} ([yshift=-0.3cm]api.east);
+			
+			% Flecha API -> Cliente
+			\draw[arrow] ([yshift=-0.3cm]api.west) -- node[below, font=\footnotesize\sffamily] {Respuesta JSON} 
+			([yshift=-0.3cm]cliente.east);
+			
+		\end{tikzpicture}
+		\caption{Flujo del modelo Cliente-Servidor, de elaboraci\'on propia.}
+		\label{fig:flujo_api_rest}
+	\end{figure}
+	
+	\begin{notabox}
+		M\'as adelante, se explicar\'a c\'omo cada tecnolog\'ia impacta dentro de este esquema junto a la justificaci\'on de cada una de las tecnolog\'ias elegidas.
+	\end{notabox}
+	
+	\newpage
+	
+	\section{El rol de cada tecnolog\'ia}
+	La implementaci\'on de una arquitectura desacoplada requiere la selecci\'on de un ecosistema tecnol\'ogico en el cual cada herramienta resuelva un problema concreto. A continuaci\'on, se detalla la funci\'on te\'orica de cada tecnolog\'ia integrada en la plantilla base.
+	
+	\subsection{En el backend}
+	La capa del backend constituye el motor computacional del sistema. Dentro del entorno Java, se utiliza la plataforma Spring para gestionar la infraestructura del servidor, el acceso a datos y los mecanismos de seguridad.
+	
+	\paragraph{Spring Boot:} Spring Boot es un framework diseñado para simplificar la creaci\'on de aplicaciones basadas en Spring listas para un entorno de producci\'on \cite{spring-boot}. Su objetivo principal es resolver la elevada complejidad de la configuraci\'on inicial que tradicionalmente requer\'ia el desarrollo en Java. Al proporcionar mecanismos de autoconfiguraci\'on y	 un servidor web embebido, permite levantar servicios web funcionales con un esfuerzo m\'inimo \cite{spring-boot}.
+	
+	\paragraph{Spring Data JPA:} Spring Data JPA es un m\'odulo que proporciona un patr\'on de repositorios sobre la especificaci\'on Jakarta Persistence API (JPA) \cite{spring-data-jpa}. Resuelve la problem\'atica de escribir manualmente extensas consultas SQL y administrar controladores JDBC de bajo nivel. Permite mapear clases de Java con tablas de bases de datos relacionales mediante un modelo de Mapeo Objeto-Relacional (ORM), abstrayendo las operaciones CRUD en interfaces limpias y mantenibles \cite{spring-data-jpa}.
+	
+	\paragraph{Spring Security:} Spring Security es un framework especializado en ofrecer servicios de autenticaci\'on, autorizaci\'on y protecci\'on integral contra vulnerabilidades web comunes \cite{spring-security}. Resuelve la necesidad de asegurar los puntos de entrada de la aplicaci\'on, garantizando que el acceso a los recursos del servidor est\'e restringido a identidades verificadas y autorizadas mediante mecanismos estandarizados \cite{spring-security}.
+	
+	\newpage
+
+	\subsection{En el frontend} 
+	La capa del frontend se encarga de la presentaci\'on y la interacci\'on con el usuario en el navegador web. Las herramientas elegidas buscan garantizar el rendimiento, el tipado estricto y una gesti\'on eficiente de los datos del cliente.
+	
+	\paragraph{React:} React es una biblioteca de JavaScript orientada a la construcci\'on de interfaces de usuario mediante un enfoque basado en componentes reutilizables \cite{react-docs}. Resuelve la ineficiencia del modelo DOM tradicional al utilizar un Virtual DOM, el cual calcula \'unicamente las diferencias necesarias para actualizar la pantalla, optimizando dr\'asticamente el rendimiento visual en aplicaciones web din\'amicas \cite{react-docs}.
+	
+	\paragraph{TypeScript:} TypeScript es un superconjunto tipado de JavaScript que añade comprobaci\'on de tipos est\'aticos en tiempo de desarrollo \cite{typescript-docs}. Reduce la propensi\'on a errores en tiempo de ejecuci\'on, identificando inconsistencias de datos, errores de sintaxis y llamadas a m\'etodos inexistentes antes de la compilaci\'on o ejecuci\'on en el navegador \cite{typescript-docs}.
+	
+	\paragraph{Vite:} Vite es un entorno de desarrollo y empaquetador de proyectos web de \'ultima generaci\'on \cite{vite-docs}. Resuelve la lentitud en los tiempos de arranque y reemplazo de m\'odulos presentes en empaquetadores tradicionales. Aprovecha los m\'odulos ECMAScript (ESM) nativos de los navegadores modernos para proporcionar un servidor de desarrollo con respuesta casi instant\'anea \cite{vite-docs}.
+	
+	\paragraph{Tailwind CSS:} Tailwind CSS es un framework CSS orientado a utilidades de bajo nivel (\textit{utility-first}) \cite{tailwind-docs}. Resuelve la dificultad de mantener grandes hojas de estilo CSS externas y la necesidad de inventar nombres de clases sem\'anticas, permitiendo diseñar interfaces directamente en el marcado y generando archivos finales sumamente ligeros \cite{tailwind-docs}.
+	
+	\paragraph{TanStack Query:} TanStack Query es una biblioteca para la gesti\'on del estado as\'incrono y del servidor (\textit{server state}) en aplicaciones web \cite{tanstack-query}. Resuelve la complejidad de sincronizar datos remotos, gestionando autom\'aticamente la obtenci\'on, almacenamiento en cach\'e, reintentos y actualizaci\'on en segundo plano de las peticiones HTTP a la API REST \cite{tanstack-query}.
+	
+	\paragraph{Zustand:} Zustand es una biblioteca ligera para la gesti\'on del estado global del cliente (\textit{client state}) basada en \textit{hooks} \cite{zustand-docs}. Resuelve la sobrecarga de c\'odigo repetitivo de manejadores tradicionales, permitiendo compartir datos entre componentes de forma expl\'icita y directa \cite{zustand-docs}.
+	
+	
+	\subsection{En la persistencia de datos}
+	La capa de persistencia asegura que la informaci\'on permanezca almacenada de forma confiable y consistente a lo largo del tiempo.
+	
+	\paragraph{PostgreSQL:}	PostgreSQL es un sistema de gesti\'on de bases de datos objeto-relacional (ORDBMS) reconocido por su apego a los est\'andares de integridad \cite{postgresql-docs}. Resuelve la necesidad de almacenar datos estructurados bajo el cumplimiento del modelo ACID (Atomicidad, Consistencia, Aislamiento, Durabilidad), garantizando la estabilidad transaccional mediante mecanismos como el control de concurrencia multiversi\'on (MVCC) \cite{postgresql-docs}.
+	
+	
+	\section{Conceptos claves de seguridad web}
+	Una aplicaci\'on web atiende peticiones de cualquier cliente que conozca su direcci\'on URL, por lo que gran parte de la responsabilidad del backend consiste en determinar en qui\'en se conf\'ia y qu\'e acciones se le permiten ejecutar.
+	
+	\subsection{Autenticaci\'on y autorizaci\'on}
+	La \textbf{autenticaci\'on} es el proceso mediante el cual un sistema verifica la identidad de una entidad o usuario, comprobando la validez de sus credenciales para asegurar que realmente es quien afirma ser \cite{owasp_auth}. Lo m\'as com\'un es solicitar un correo electr\'onico y una contraseña, aunque existen m\'etodos avanzados como la autenticaci\'on multifactor o biom\'etrica \cite{owasp_auth}. Es el primer paso de cualquier esquema de seguridad, ya que todo lo dem\'as depende de saber con certeza con qui\'en se est\'a interactuando. En un sistema web t\'ipico, la autenticaci\'on ocurre cuando el usuario inicia sesi\'on y el servidor valida sus credenciales contra la informaci\'on almacenada en la base de datos. \\
+	
+	Por otro lado, la \textbf{autorizaci\'on} determina las acciones espec\'ificas que una identidad verificada tiene permiso de realizar sobre los recursos del sistema \cite{owasp_authz}. Este proceso ocurre siempre despu\'es de la autenticaci\'on, ya que no es posible asignar privilegios a una identidad no comprobada \cite{owasp_authz}. Un ejemplo habitual es la diferencia entre un usuario est\'andar y un administrador: ambos autentican su identidad correctamente, pero solo el administrador posee la autorizaci\'on para modificar datos de otros usuarios o acceder a paneles de gesti\'on.
+	
+	\subsection{Cifrado, funciones hash y BCrypt}
+	El \textbf{cifrado} es un procedimiento reversible mediante el cual se transforma la informaci\'on en un formato ininteligible utilizando algoritmos matem\'aticos y claves secretas, permitiendo recuperar el contenido original \'unicamente a quien posea la clave adecuada. Se utiliza para proteger la informaci\'on en tr\'ansito (por ejemplo, mediante HTTPS entre el navegador y el servidor), y en reposo (por ejemplo, informaci\'on almacenada en una base de datos). \\
+	
+	Por el contrario, una \textbf{funci\'on hash} es un algoritmo unidireccional que transforma un texto de cualquier longitud en un valor de tamaño fijo \cite{owasp_password_storage}. A partir del valor \textit{hash} resulta imposible reconstruir el texto original; \'unicamente se puede calcular el \textit{hash} de un nuevo texto y verificar si coincide con el almacenado \cite{owasp_password_storage}. Por esta raz\'on, las contraseñas nunca deben guardarse cifradas, ni mucho menos en texto plano, sino como un \textit{hash} \cite{owasp_password_storage}. De este modo, si la base de datos es filtrada, los atacantes no obtienen acceso directo a las credenciales reales.
+	
+	\begin{warnbox}
+		OWASP advierte que algoritmos de prop\'osito general o de alta velocidad (como SHA-256) no deben usarse para contraseñas, ya que facilitan ataques de fuerza bruta \cite{owasp_password_storage}.
+	\end{warnbox}
+	
+	\textbf{BCrypt} es un algoritmo de \textit{hashing} diseñado espec\'ificamente para el almacenamiento seguro de contraseñas \cite{owasp_password_storage}. Su lentitud es deliberada y configurable mediante un factor de trabajo (\textit{work factor}): el tiempo necesario para calcular cada \textit{hash} es imperceptible para un usuario leg\'itimo al iniciar sesi\'on, pero encarece dr\'asticamente los intentos masivos de adivinaci\'on automatizada \cite{owasp_password_storage}. Adem\'as, BCrypt incorpora de forma autom\'atica un valor aleatorio llamado \textit{sal} (\textit{salt}) antes de procesar el \textit{hash}, lo que garantiza que dos usuarios con la misma contraseña obtengan valores finales distintos en la base de datos \cite{owasp_password_storage}.
+	
+	\subsection{Variables de entorno}
+	Las \textbf{variables de entorno} son valores din\'amicos proporcionados por el sistema operativo al proceso de la aplicaci\'on en tiempo de ejecuci\'on. Se utilizan para separar la configuraci\'on sensible (como credenciales de la base de datos, claves secretas o URL de servicios externos) del c\'odigo fuente. \\
+	
+	La metodolog\'ia \textit{The Twelve-Factor App} propone mantener esta configuraci\'on estrictamente separada del c\'odigo fuente y establece una prueba fundamental: si el c\'odigo pudiera hacerse p\'ublico en cualquier momento sin revelar ninguna credencial, la arquitectura de configuraci\'on es correcta \cite{twelve_factor_config}. Escribir credenciales directamente en el c\'odigo expone la seguridad del sistema, ya que las claves permanecen registradas en el historial de control de versiones incluso despu\'es de ser eliminadas. 
+	
+	\newpage
+	
+	\subsection{Intercambio de recursos de origen cruzado (CORS)}
+	Por motivos de seguridad, los navegadores web aplican la pol\'itica del mismo origen (\textit{Same-Origin Policy}), impidiendo que los scripts de una p\'agina realicen peticiones HTTP a un origen diferente (definido por la combinaci\'on de protocolo, dominio y puerto) \cite{mdn_cors}. \\
+	
+	\textbf{CORS} (\textit{Cross-Origin Resource Sharing}) es el mecanismo basado en encabezados HTTP mediante el cual el servidor autoriza de forma expl\'icita a qu\'e or\'igenes externos se les permite consultar sus recursos \cite{mdn_cors}. Para peticiones complejas, el navegador ejecuta autom\'aticamente una solicitud previa de verificaci\'on (\textit{preflight request}) utilizando el m\'etodo \texttt{OPTIONS} para confirmar si el servidor aceptar\'a la comunicaci\'on \cite{mdn_cors}.
+	
+	\begin{notabox}
+		En la arquitectura fullstack, com\'unmente, el frontend y backend operan en puertos distintos durante la fase de desarrollo, constituyendo or\'igenes diferentes; por ello, el backend debe configurar una pol\'itica CORS adecuada limitando el acceso \'unicamente a los dominios necesarios.
+	\end{notabox}
+	
+	\subsection{Tokens de acceso: JWT}
+	
+	\textbf{JSON Web Token (JWT)} es un est\'andar abierto en formato compacto e independiente (especificado en el RFC 7519) para transmitir informaci\'on estructurada como un objeto JSON entre dos partes de forma segura \cite{jwt_io, rfc7519}.
+	
+	Su flujo habitual en aplicaciones web desacopladas consiste en lo siguiente: cuando el usuario se autentica con \'exito, el servidor genera un token firmado digitalmente y se lo entrega al cliente. El cliente almacena el token y lo adjunta en el encabezado de autorizaci\'on (\texttt{Authorization: Bearer <token>}) en cada petici\'on subsiguiente. Esto permite al backend verificar la validez del cliente analizando la firma del token sin requerir almacenar sesiones en memoria (\textit{stateless}). Un JWT firmado garantiza la integridad de su contenido, pero no la confidencialidad, ya que sus datos son p\'ublicamente legibles mediante codificaci\'on Base64URL; por ende, jam\'as debe incluirse informaci\'on confidencial en la carga \'util (\textit{payload}) \cite{jwt_io}.
+	
+	\begin{notabox}
+		La especificaci\'on RFC 8725 complementa el est\'andar recopilando las mejores pr\'acticas actualizadas para la implementaci\'on segura de JWTs \cite{rfc8725}.
+	\end{notabox}
+	
+	\section{¿Por qu\'e contenedores?}
+	En el desarrollo colaborativo es habitual enfrentarse al problema de que una aplicaci\'on funcione en el equipo de un integrante pero falle en el de otro. Este fen\'omeno suele derivar de discrepancias en el entorno de ejecuci\'on, como versiones distintas del compilador, librer\'ias del sistema operativo desactualizadas o configuraciones locales dis\'imiles. La tecnolog\'ia de contenedores resuelve esta problem\'atica encapsulando la aplicaci\'on y sus dependencias en una unidad estandarizada.
+	
+	\subsection{Virtualizaci\'on tradicional frente a contenerizaci\'on}
+	Para comprender la arquitectura de un contenedor, es \'util contrastarlo con la virtualizaci\'on tradicional basada en hipervisores \cite{docker_container}. Una \textbf{m\'aquina virtual (VM)} emula un hardware completo y requiere la ejecuci\'on de un sistema operativo hu\'esped (\textit{Guest OS}) completo sobre el hipervisor \cite{ibm_virtualization}. Esto proporciona un aislamiento fuerte, pero consume recursos considerables de memoria y disco, ralentizando los tiempos de arranque \cite{ibm_virtualization}. \\
+	
+	Por el contrario, la \textbf{contenerizaci\'on} funciona aislando procesos directamente sobre el n\'ucleo (\textit{kernel}) del sistema operativo anfitri\'on \cite{ibm_containerization, docker_container}. Cada contenedor comparte el \textit{kernel} pero mantiene sus propios sistemas de archivos, procesos y variables de red separados \cite{ibm_containerization, docker_container}. Esta abstracci\'on permite que los contenedores sean sumamente ligeros, inicien en cuesti\'on de segundos y aprovechen de forma eficiente los recursos del sistema f\'isico \cite{ibm_containerization,docker_container}.
+	
+	\subsection{Ecosistema Docker: im\'agenes, contenedores y registros}
+	\textbf{Docker} es la plataforma de c\'odigo abierto de referencia para el desarrollo, env\'io y ejecuci\'on de aplicaciones mediante contenedores \cite{docker_overview}. Permite empaquetar el c\'odigo fuente junto con las bibliotecas, tiempos de ejecuci\'on y configuraciones en una unidad port\'atil ejecutable de forma id\'entica en cualquier entorno que disponga del motor Docker \cite{docker_overview}. Sus tres componentes conceptuales clave son:
+	
+	\begin{itemize}
+		\item \textbf{Imagen:} Es un paquete estandarizado, inmutable y de solo lectura que contiene los archivos, binarios, librer\'ias y configuraciones requeridas para ejecutar la aplicaci\'on \cite{docker_image}. Las im\'agenes se construyen mediante capas superpuestas, lo que optimiza el almacenamiento al compartir capas comunes entre distintas aplicaciones \cite{docker_image}.
+		\item \textbf{Registro:} Es un sistema de almacenamiento y distribuci\'on de im\'agenes de contenedores \cite{docker_registry}. El registro p\'ublico predeterminado es Docker Hub, desde el cual se pueden descargar im\'agenes oficiales para bases de datos, servidores web o lenguajes de programaci\'on \cite{docker_registry}.
+		\newpage
+		\item \textbf{Contenedor:} Es una instancia ejecutable y aislada en tiempo de ejecuci\'on creada a partir de una imagen \cite{docker_container}. Siguiendo la analog\'ia de la programaci\'on orientada a objetos, la imagen act\'ua como la definici\'on de la clase y el contenedor es el objeto instanciado en memoria. Dado que los contenedores son ef\'imeros, la persistencia de datos se gestiona mediante vol\'umenes independientes administrados por Docker.
+	\end{itemize}
+	
+	\subsection{Orquestaci\'on local con Docker Compose}
+	Una aplicaci\'on fullstack se compone de m\'ultiples servicios independientes que deben ejecutarse en coordinaci\'on. \textbf{Docker Compose} es una herramienta declarativa diseñada para definir y administrar aplicaciones de este tipo mediante un \'unico archivo de configuraci\'on en formato YAML (\texttt{docker-compose.yml}) \cite{docker_compose}.\\
+	
+	En lugar de ejecutar m\'ultiples comandos individuales para crear redes, vol\'umenes y contenedores, Docker Compose permite estructurar la arquitectura completa del proyecto y levantarla de forma integral con un solo comando \cite{docker_compose}. Es importante diferenciar el archivo \texttt{Dockerfile} de \texttt{docker-compose.yml}: el primero contiene las instrucciones para construir una imagen personalizada, mientras que el segundo orquesta la ejecuci\'on, puertos y conectividad de todos los contenedores del ecosistema.
